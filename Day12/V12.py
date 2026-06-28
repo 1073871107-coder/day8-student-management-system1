@@ -1,0 +1,149 @@
+import json
+def save_data(students):
+     with open("students.json","wt",encoding="utf-8") as f:
+          json.dump(students,f,ensure_ascii=False,indent=4)
+
+def load_data():
+    try:
+        with open("students.json","rt",encoding="utf-8") as f:
+            result=json.load(f)
+            return result
+    except:return []
+    
+def judge_score():
+    while True:
+             try:
+                score=float(input("请输入学生成绩："))
+                return score
+             except:print("请输入数字")
+
+def add_students(students):#定义添加学生信息函数
+    n=int(input("请输入需要添加的学生数量："))#确定下一步循环次数
+    for i in range(n):#把学生信息循环加入students列表
+        print(f"请输入第{i+1}位学生的信息：")
+        name=input("请输入学生姓名：")
+        while True:
+             try:
+                age=int(input("请输入学生年龄："))
+                break
+             except:print("请输入数字")
+        score=judge_score()
+        students.append({
+            "姓名":name,
+            "年龄":age ,
+            "成绩":score
+             })
+    return students#返回students列表
+
+def print_students(student):
+    for k,v in student.items():
+        print(f"{k}:{v}")
+
+def none_students(students):
+    if not students:
+        print("学生信息是空")
+        return True
+    return False
+
+def show_students(students):#定义显示学生信息函数
+    if none_students(students):
+       return
+    print("学生信息是：")
+    for i,student in enumerate(students):#从students列表里取出元素，取出的元素student是字典
+        print(f"第{i+1}位同学：")
+        print_students(student)
+
+def check_students(students):#定义查找学生信息函数
+    if none_students(students):
+       return
+
+    name=input("请输入需要查找的学生姓名")
+    found=False
+    for student in students:
+        if student["姓名"]==name:
+            print("你查找的学生信息是：")
+            print_students(student)
+            found=True
+            break
+    if not found:
+        print("没有找到该学生")
+
+def update_students(students):#定义修改学生成绩函数
+    if none_students(students):
+       return
+
+    name=input("请输入需要修改的学生姓名")
+    found=False
+    for student in students:
+        if student["姓名"]==name:
+            score=judge_score()
+            student["成绩"]=score
+            print("修改后学生信息是：")
+            print_students(student)
+            found=True
+            break
+    if not found:
+        print("没有找到该学生")
+    return students
+
+def del_students(students):#定义删除学生信息函数
+    if none_students(students):
+       return
+
+    name=input("请输入需要删除的学生姓名")
+    found=False
+    for i,student1 in enumerate(students):
+        if student1["姓名"]==name:
+           student=students.pop(i)
+           print("删除成功")
+           print("删除学生信息是：")
+           print_students(student)
+           found=True
+           break
+    if not found:
+        print("没有找到该学生")
+    return students
+
+def avg_students(students):#定义分数平均数函数
+    if none_students(students):
+       return
+
+    total_score=0
+    for student in students:
+        score=student["成绩"]
+        total_score+=score
+    print(f"平均成绩是:{total_score/len(students)}")
+
+
+def main():#定义主菜单函数
+    students=load_data()
+    if type(students)!=list:
+       students=[]
+    while True:
+            print("添加学生信息请输入数字：1")
+            print("查看学生信息请输入数字：2")
+            print("查找学生信息请输入数字：3")
+            print("修改学生信息请输入数字：4")
+            print("删除学生信息请输入数字：5")
+            print("查看平均分请输入数字：6")
+            print("结束请输入数字：0")
+            n=int(input("请输入数字："))
+            if n==1:
+               students=add_students(students)
+               save_data(students)
+            elif n==2:
+                show_students(students)
+            elif n==3:
+                check_students(students)
+            elif n==4:
+                students=update_students(students)
+                save_data(students)
+            elif n==5:
+                students=del_students(students)
+                save_data(students)
+            elif n==6:
+                avg_students(students)
+            elif n==0:
+                break    
+if __name__=="__main__":
+   main()
